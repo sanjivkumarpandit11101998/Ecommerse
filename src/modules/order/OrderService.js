@@ -5,7 +5,7 @@
 
 const orderRepository = require('./OrderRepository');
 const cartRepository = require('../cart/CartRepository');
-const productRepository = require('../product/ProductRepository');
+const productRepository = require('../product/repository/ProductRepository');
 
 class OrderService {
   // Get all orders
@@ -20,7 +20,7 @@ class OrderService {
   // Get order by ID
   async getOrderById(id) {
     try {
-      const order = orderRepository.findById(id);
+      const order = await orderRepository.findById(id);
       if (!order) {
         throw new Error('Order not found');
       }
@@ -34,7 +34,7 @@ class OrderService {
   async createOrderFromCart(userId, orderData) {
     try {
       // Get user's cart
-      const cart = cartRepository.findByUserId(userId);
+      const cart = await cartRepository.findByUserId(userId);
       
       if (cart.items.length === 0) {
         throw new Error('Cart is empty');
@@ -43,7 +43,7 @@ class OrderService {
       // Verify products exist and have sufficient stock
       const orderItems = [];
       for (const cartItem of cart.items) {
-        const product = productRepository.findById(cartItem.productId);
+        const product = await productRepository.findById(cartItem.productId);
         if (!product) {
           throw new Error(`Product ${cartItem.productId} not found`);
         }
@@ -81,7 +81,7 @@ class OrderService {
       }
       
       // Clear cart
-      cartRepository.clear(userId);
+      await cartRepository.clear(userId);
       
       return order;
     } catch (error) {
@@ -99,7 +99,7 @@ class OrderService {
         throw new Error('Invalid order status');
       }
       
-      return orderRepository.updateStatus(id, status);
+      return await orderRepository.updateStatus(id, status);
     } catch (error) {
       throw new Error(`Failed to update order status: ${error.message}`);
     }

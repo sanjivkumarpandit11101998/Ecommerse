@@ -3,7 +3,7 @@
  * Presentation Layer - Handles HTTP requests for Product operations
  */
 
-const productService = require('./ProductService');
+const productService = require('../service/ProductService');
 
 class ProductController {
   // Get all products

@@ -1,0 +1,11 @@
+FROM postgres:16-alpine
+
+# Basic database configuration
+ENV POSTGRES_DB=ecommerce_db
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+
+# Initialize database with schema and seed data
+COPY src/db/schema.sql /docker-entrypoint-initdb.d/01_schema.sql
+COPY src/db/seed.sql /docker-entrypoint-initdb.d/02_seed.sql
+

@@ -35,7 +35,7 @@ class UserService {
   // Login user
   async login(email, password) {
     try {
-      const user = userRepository.findByEmail(email);
+      const user = await userRepository.findByEmail(email);
       if (!user) {
         throw new Error('Invalid credentials');
       }
@@ -61,7 +61,7 @@ class UserService {
   // Get user by ID
   async getUserById(id) {
     try {
-      const user = userRepository.findById(id);
+      const user = await userRepository.findById(id);
       if (!user) {
         throw new Error('User not found');
       }
@@ -79,7 +79,7 @@ class UserService {
         userData.password = await bcrypt.hash(userData.password, 10);
       }
       
-      return userRepository.update(id, userData);
+      return await userRepository.update(id, userData);
     } catch (error) {
       throw new Error(`Failed to update user: ${error.message}`);
     }

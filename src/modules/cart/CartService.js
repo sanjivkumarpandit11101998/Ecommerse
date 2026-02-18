@@ -4,7 +4,7 @@
  */
 
 const cartRepository = require('./CartRepository');
-const productRepository = require('../product/ProductRepository');
+const productRepository = require('../product/repository/ProductRepository');
 
 class CartService {
   // Get user's cart

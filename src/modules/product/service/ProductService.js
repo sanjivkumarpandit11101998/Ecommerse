@@ -3,7 +3,7 @@
  * Business Logic Layer for Product operations
  */
 
-const productRepository = require('./ProductRepository');
+const productRepository = require('../repository/ProductRepository');
 
 class ProductService {
   // Get all products with optional filters
@@ -18,7 +18,7 @@ class ProductService {
   // Get product by ID
   async getProductById(id) {
     try {
-      const product = productRepository.findById(id);
+      const product = await productRepository.findById(id);
       if (!product) {
         throw new Error('Product not found');
       }
@@ -41,7 +41,7 @@ class ProductService {
   async updateProduct(id, productData) {
     try {
       const product = await this.getProductById(id);
-      return productRepository.update(id, productData);
+      return await productRepository.update(id, productData);
     } catch (error) {
       throw new Error(`Failed to update product: ${error.message}`);
     }
@@ -51,7 +51,7 @@ class ProductService {
   async deleteProduct(id) {
     try {
       const product = await this.getProductById(id);
-      const deleted = productRepository.delete(id);
+      const deleted = await productRepository.delete(id);
       if (!deleted) {
         throw new Error('Failed to delete product');
       }

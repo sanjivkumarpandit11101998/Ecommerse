@@ -1,11 +1,95 @@
-/**
- * Cart Routes
- */
-
 const express = require('express');
 const router = express.Router();
 const cartController = require('./CartController');
 const { authenticate } = require('../../middleware/auth');
+
+/**
+ * @openapi
+ * /api/cart:
+ *   get:
+ *     summary: Get the current user's cart
+ *     tags:
+ *       - Cart
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Cart fetched successfully
+ *   delete:
+ *     summary: Clear the current user's cart
+ *     tags:
+ *       - Cart
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Cart cleared successfully
+ *
+ * /api/cart/items:
+ *   post:
+ *     summary: Add an item to the cart
+ *     tags:
+ *       - Cart
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               productId:
+ *                 type: integer
+ *               quantity:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Item added to cart
+ *
+ * /api/cart/items/{productId}:
+ *   delete:
+ *     summary: Remove an item from the cart
+ *     tags:
+ *       - Cart
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID of the product to remove
+ *     responses:
+ *       200:
+ *         description: Item removed from cart
+ *   put:
+ *     summary: Update quantity of an item in the cart
+ *     tags:
+ *       - Cart
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID of the product to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               quantity:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Cart item updated
+ */
 
 // All cart routes require authentication
 router.get('/', authenticate, cartController.getCart.bind(cartController));

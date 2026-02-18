@@ -5,6 +5,8 @@
 
 const express = require('express');
 const cors = require('cors');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const config = require('./config/app');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -17,16 +19,58 @@ const { cartRoutes } = require('./modules/cart');
 // Initialize Express app
 const app = express();
 
+// Swagger/OpenAPI setup
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Ecommerce API',
+      version: '1.0.0',
+      description: 'API documentation for the Ecommerce application',
+    },
+    servers: [
+      {
+        url: `http://localhost:${config.port}`,
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+  },
+  // Files containing annotations as above
+  apis: ['src/modules/**/*.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
 // Middleware
 app.use(cors(config.cors));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check route
-app.get('/health', (req, res) => {
+// Swagger UI route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Health check route (includes DB connectivity)
+app.get('/health', async (req, res) => {
+  const db = require('./config/database');
+  let dbStatus = 'unknown';
+  try {
+    await db.query('SELECT 1');
+    dbStatus = 'connected';
+  } catch (err) {
+    dbStatus = 'disconnected';
+  }
   res.json({
     success: true,
     message: 'Ecommerce API is running',
+    database: dbStatus,
     timestamp: new Date().toISOString()
   });
 });
