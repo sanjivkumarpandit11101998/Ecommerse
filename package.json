@@ -13,6 +13,11 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
+    "debug": "node --inspect=9229 src/app.js",
+    "dev:debug": "nodemon --inspect=9229 src/app.js",
+    "free:dev-ports": "sh -c 'lsof -ti -iTCP:3001 -iTCP:9229 | xargs kill -9 2>/dev/null || true'",
+    "dev:clean": "npm run free:dev-ports && nodemon src/app.js",
+    "dev:debug:clean": "npm run free:dev-ports && nodemon --inspect=9229 src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:migrate": "node src/db/migrate.js"
   },

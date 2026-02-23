@@ -7,11 +7,21 @@ class Product {
   constructor(data) {
     this.id = data.id;
     this.name = data.name;
+    this.slug = data.slug;
+    this.shortDescription = data.shortDescription || '';
     this.description = data.description || '';
-    this.price = data.price;
-    this.stock = data.stock || 0;
-    this.category = data.category || '';
-    this.imageUrl = data.imageUrl || '';
+    this.basePrice = Number(data.basePrice || 0);
+    this.brandId = data.brandId || null;
+    this.brandName = data.brandName || null;
+    this.categoryId = data.categoryId || null;
+    this.categoryName = data.categoryName || null;
+    this.status = data.status || 'ACTIVE';
+    this.isFeatured = Boolean(data.isFeatured);
+    this.averageRating = Number(data.averageRating || 0);
+    this.images = Array.isArray(data.images) ? data.images : [];
+    this.variants = Array.isArray(data.variants) ? data.variants : [];
+    this.specifications = data.specifications || null;
+    this.reviews = Array.isArray(data.reviews) ? data.reviews : [];
     this.createdAt = data.createdAt || new Date();
     this.updatedAt = data.updatedAt || new Date();
   }
@@ -19,19 +29,23 @@ class Product {
   // Validate product data
   static validate(data) {
     const errors = [];
-    
+
     if (!data.name || data.name.trim().length === 0) {
       errors.push('Product name is required');
     }
-    
-    if (!data.price || data.price <= 0) {
-      errors.push('Product price must be greater than 0');
+
+    if (!data.slug || data.slug.trim().length === 0) {
+      errors.push('Product slug is required');
     }
-    
-    if (data.stock !== undefined && data.stock < 0) {
-      errors.push('Stock cannot be negative');
+
+    if (data.basePrice === undefined || data.basePrice === null || Number(data.basePrice) <= 0) {
+      errors.push('Product basePrice must be greater than 0');
     }
-    
+
+    if (data.status && !['ACTIVE', 'INACTIVE', 'DRAFT'].includes(data.status)) {
+      errors.push('Status must be ACTIVE, INACTIVE or DRAFT');
+    }
+
     return {
       isValid: errors.length === 0,
       errors
@@ -43,11 +57,21 @@ class Product {
     return {
       id: this.id,
       name: this.name,
+      slug: this.slug,
+      shortDescription: this.shortDescription,
       description: this.description,
-      price: this.price,
-      stock: this.stock,
-      category: this.category,
-      imageUrl: this.imageUrl,
+      basePrice: this.basePrice,
+      brandId: this.brandId,
+      brandName: this.brandName,
+      categoryId: this.categoryId,
+      categoryName: this.categoryName,
+      status: this.status,
+      isFeatured: this.isFeatured,
+      averageRating: this.averageRating,
+      images: this.images,
+      variants: this.variants,
+      specifications: this.specifications,
+      reviews: this.reviews,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };
