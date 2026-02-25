@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const cartController = require('./CartController');
+const cartController = require('./controller/CartController');
 const { authenticate } = require('../../middleware/auth');
 
 /**
@@ -39,15 +39,16 @@ const { authenticate } = require('../../middleware/auth');
  *           schema:
  *             type: object
  *             properties:
- *               productId:
- *                 type: integer
+ *               productVariantId:
+ *                 type: string
+ *                 format: uuid
  *               quantity:
  *                 type: integer
  *     responses:
  *       201:
  *         description: Item added to cart
  *
- * /api/cart/items/{productId}:
+ * /api/cart/items/{productVariantId}:
  *   delete:
  *     summary: Remove an item from the cart
  *     tags:
@@ -56,11 +57,12 @@ const { authenticate } = require('../../middleware/auth');
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: productId
+ *         name: productVariantId
  *         schema:
- *           type: integer
+ *           type: string
+ *           format: uuid
  *         required: true
- *         description: ID of the product to remove
+ *         description: ID of the product variant to remove
  *     responses:
  *       200:
  *         description: Item removed from cart
@@ -72,11 +74,12 @@ const { authenticate } = require('../../middleware/auth');
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: productId
+ *         name: productVariantId
  *         schema:
- *           type: integer
+ *           type: string
+ *           format: uuid
  *         required: true
- *         description: ID of the product to update
+ *         description: ID of the product variant to update
  *     requestBody:
  *       required: true
  *       content:
@@ -94,8 +97,8 @@ const { authenticate } = require('../../middleware/auth');
 // All cart routes require authentication
 router.get('/', authenticate, cartController.getCart.bind(cartController));
 router.post('/items', authenticate, cartController.addToCart.bind(cartController));
-router.delete('/items/:productId', authenticate, cartController.removeFromCart.bind(cartController));
-router.put('/items/:productId', authenticate, cartController.updateCartItem.bind(cartController));
+router.delete('/items/:productVariantId', authenticate, cartController.removeFromCart.bind(cartController));
+router.put('/items/:productVariantId', authenticate, cartController.updateCartItem.bind(cartController));
 router.delete('/', authenticate, cartController.clearCart.bind(cartController));
 
 module.exports = router;

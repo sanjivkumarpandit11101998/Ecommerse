@@ -4,7 +4,7 @@
  */
 
 const orderRepository = require('./OrderRepository');
-const cartRepository = require('../cart/CartRepository');
+const cartRepository = require('../cart/repository/CartRepository');
 const productRepository = require('../product/repository/ProductRepository');
 
 class OrderService {

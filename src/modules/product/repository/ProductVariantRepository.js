@@ -10,10 +10,22 @@ class ProductVariantRepository {
     return client || db;
   }
 
+  async findById(id, client = null) {
+    const executor = this._executor(client);
+    const result = await executor.query(
+      `SELECT product_id, id, sku, attribute_name, attribute_value, price, created_at
+       FROM product_variant
+       WHERE id = $1`,
+      [id]
+    );
+
+    return result.rows[0] ? this._toVariant(result.rows[0]) : null;
+  }
+
   async findByProductId(productId, client = null) {
     const executor = this._executor(client);
     const result = await executor.query(
-      `SELECT id, sku, attribute_name, attribute_value, price, created_at
+      `SELECT product_id, id, sku, attribute_name, attribute_value, price, created_at
        FROM product_variant
        WHERE product_id = $1
        ORDER BY created_at ASC`,
@@ -86,6 +98,7 @@ class ProductVariantRepository {
     const attributes = this._toAttributesObject(attributeName, attributeValue);
     const variant = {
       id: row.id,
+      productId: row.product_id || null,
       sku: row.sku,
       attributeName,
       attributeValue,
